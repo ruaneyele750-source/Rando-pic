@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tchop Box – Compose ton repas</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0d0a;
+    --surface: #1a1612;
+    --surface2: #231f1a;
+    --accent: #f4a024;
+    --accent2: #e85d2f;
+    --text: #f5ede0;
+    --muted: #7a6f62;
+    --danger: #e83232;
+    --success: #3dba6a;
+    --warn: #f4a024;
+    --card-bg: #1e1a15;
+    --border: rgba(244,160,36,0.15);
+    --radius: 18px;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,13,10,0.92);
+    backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo span { -webkit-text-fill-color: var(--text); }
+  nav { display: flex; gap: 24px; align-items: center; }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+  .btn-header {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0f0d0a;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-header:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(244,160,36,0.35); }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 90px 24px 70px;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(244,160,36,0.1);
+    border: 1px solid rgba(244,160,36,0.28);
+    color: var(--accent);
+    padding: 6px 20px;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 9vw, 7.5rem);
+    line-height: 0.93;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #f5ede0 20%, var(--accent) 80%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 22px;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 440px;
+    margin: 0 auto 44px;
+    line-height: 1.7;
+  }
+  .cta-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0f0d0a;
+    border: none;
+    padding: 18px 40px;
+    border-radius: 60px;
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 50px rgba(244,160,36,0.28);
+    text-decoration: none;
+  }
+  .cta-main:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 44px rgba(244,160,36,0.5); }
+
+  /* MENUS */
+  .menus-section {
+    padding: 60px 40px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 54px;
+    font-size: 0.92rem;
+    letter-spacing: 0.5px;
+  }
+  .menus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .menu-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
+    cursor: pointer;
+  }
+  .menu-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(244,160,36,0.45);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  }
+  .menu-card-img {
+    width: 100%;
+    height: 195px;
+    background: linear-gradient(135deg, #221c12, #1a1508);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5.5rem;
+    position: relative;
+  }
+  .menu-card-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: var(--accent);
+    color: #0f0d0a;
+    font-weight: 800;
+    font-size: 0.7rem;
+    padding: 4px 13px;
+    border-radius: 50px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .menu-card-body { padding: 26px; }
+  .menu-card-name {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .menu-card-desc {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    margin-bottom: 18px;
+  }
+  .menu-card-slots { display: flex; gap: 6px; margin-bottom: 22px; }
+  .slot-dot {
+    flex: 1;
+    height: 7px;
+    border-radius: 4px;
+    background: rgba(244,160,36,0.15);
+    border: 1px solid rgba(244,160,36,0.25);
+  }
+  .menu-card-price { display: flex; align-items: center; justify-content: space-between; }
+  .price { font-family: var(--font-display); font-size: 1.5rem; color: var(--accent); letter-spacing: 1px; }
+  .btn-choose {
+    background: rgba(244,160,36,0.1);
+    border: 1px solid rgba(244,160,36,0.28);
+    color: var(--accent);
+    padding: 9px 20px;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-choose:hover { background: var(--accent); color: #0f0d0a; }
+
+  /* COMPOSER MODAL */
+  .composer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,6,3,0.94);
+    backdrop-filter: blur(10px);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .composer-overlay.open { opacity: 1; pointer-events: all; }
+  .composer-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    width: 100%;
+    max-width: 1080px;
+    max-height: 93vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    transform: translateY(28px) scale(0.97);
+    transition: transform 0.45s cubic-bezier(0.34,1.5,0.64,1);
+  }
+  .composer-overlay.open .composer-modal { transform: translateY(0) scale(1); }
+
+  /* Left panel */
+  .composer-left {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .composer-header {
+    padding: 26px 28px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .composer-title {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    letter-spacing: 2.5px;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .composer-subtitle { color: var(--muted); font-size: 0.78rem; margin-top: 4px; }
+  .close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .close-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+  .food-categories {
+    display: flex;
+    gap: 8px;
+    padding: 14px 28px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .food-categories::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 16px;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.76rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cat-btn.active, .cat-btn:hover { background: var(--accent); color: #0f0d0a; border-color: var(--accent); }
+  .food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 12px;
+    padding: 18px 28px;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    align-content: start;
+  }
+  .food-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    user-select: none;
+  }
+  .food-item:hover:not(.out-of-stock):not(.box-full) {
+    transform: translateY(-5px) scale(1.05);
+    border-color: rgba(244,160,36,0.55);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+    background: var(--card-bg);
+  }
+  .food-item:active:not(.out-of-stock):not(.box-full) { transform: scale(0.96); }
+  .food-item.out-of-stock { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+  .food-item.box-full { opacity: 0.38; cursor: not-allowed; }
+  .food-emoji { font-size: 2.5rem; display: block; margin-bottom: 9px; line-height: 1; }
+  .food-name { font-size: 0.72rem; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 4px; }
+  .food-cal { font-size: 0.65rem; color: var(--muted); }
+  .stock-bubble {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    font-size: 0.63rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--surface2);
+    transition: all 0.25s;
+  }
+  .stock-bubble.warn { background: var(--warn); color: #0f0d0a; }
+  .stock-bubble.pulse { animation: bubblePop 0.3s ease; }
+  @keyframes bubblePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+  }
+
+  /* Right panel */
+  .composer-right {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface2);
+    overflow: hidden;
+  }
+  .box-header {
+    padding: 26px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .box-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    letter-spacing: 2.5px;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+  .box-size-label {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .canvas-wrap {
+    flex: 1;
+    position: relative;
+    min-height: 200px;
+    cursor: grab;
+    overflow: hidden;
+  }
+  .canvas-wrap:active { cursor: grabbing; }
+  #boxCanvas { width: 100%; height: 100%; display: block; }
+  .drag-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10,8,5,0.72);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.68rem;
+    padding: 5px 14px;
+    border-radius: 50px;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: opacity 0.5s;
+  }
+  .fill-gauge-wrap {
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .fill-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .fill-label span { font-size: 0.76rem; font-weight: 600; color: var(--muted); }
+  .fill-count { font-family: var(--font-display); font-size: 1rem; letter-spacing: 1px; color: var(--accent); }
+  .gauge-track {
+    height: 7px;
+    background: rgba(244,160,36,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .gauge-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--success), var(--accent));
+    transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+    width: 0%;
+  }
+  .gauge-fill.full { background: linear-gradient(90deg, var(--accent), var(--danger)); }
+  .box-items-list {
+    padding: 0 24px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 120px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    flex-shrink: 0;
+  }
+  .box-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 12px;
+    animation: slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(18px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .box-item-left { display: flex; align-items: center; gap: 8px; }
+  .box-item-emoji { font-size: 1.15rem; }
+  .box-item-name { font-size: 0.76rem; font-weight: 600; }
+  .remove-item {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 3px 7px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .remove-item:hover { background: var(--danger); color: white; }
+  .full-msg {
+    text-align: center;
+    padding: 8px 24px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    display: none;
+    flex-shrink: 0;
+  }
+  .full-msg.show { display: block; }
+  .btn-order {
+    margin: 0 24px 18px;
+    padding: 15px;
+    border-radius: 13px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0f0d0a;
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 0.88rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0.38;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  .btn-order.active { opacity: 1; pointer-events: all; box-shadow: 0 8px 28px rgba(244,160,36,0.38); }
+  .btn-order.active:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(244,160,36,0.55); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(70px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 24px;
+    border-radius: 50px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    z-index: 2000;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    header { padding: 14px 18px; }
+    nav { display: none; }
+    .menus-section { padding: 36px 18px 60px; }
+    .menus-grid { grid-template-columns: 1fr; gap: 16px; }
+    .menu-card-img { height: 160px; font-size: 4.5rem; }
+    .composer-modal {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      max-height: 95vh;
+      overflow-y: auto;
+    }
+    .composer-left { border-right: none; border-bottom: 1px solid var(--border); max-height: 55vh; overflow: hidden; display: flex; flex-direction: column; }
+    .composer-right { max-height: 42vh; }
+    .canvas-wrap { min-height: 150px; }
+    .food-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); padding: 12px 14px; gap: 9px; }
+    .composer-header { padding: 18px 14px 13px; }
+    .food-categories { padding: 10px 14px; }
+    .box-header { padding: 18px 16px 12px; }
+    .fill-gauge-wrap { padding: 12px 16px; }
+    .box-items-list { padding: 0 16px 10px; }
+    .btn-order { margin: 0 16px 14px; }
+    .full-msg { padding: 8px 16px; }
+  }
+  @media (max-width: 480px) {
+    .hero { padding: 55px 16px 45px; }
+    .food-grid { grid-template-columns: repeat(3, 1fr); }
+    .menus-section { padding: 28px 14px 50px; }
+    .hero p { font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">TCHOP<span>.</span></div>
+  <nav>
+    <a href="#">Menus</a>
+    <a href="#">Promos</a>
+    <a href="#">À propos</a>
+  </nav>
+  <button class="btn-header" onclick="openComposer('big')">🍱 Composer ma Box</button>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">🔥 Fast food d'ici</div>
+  <h1>MANGE COMME<br>TU VEUX</h1>
+  <p>Compose ton Tchop Box à ta façon. Choisis tes aliments, remplis ton carton et régale-toi.</p>
+  <a class="cta-main" href="#menus">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+    </svg>
+    Voir les menus
+  </a>
+</section>
+
+<section class="menus-section" id="menus">
+  <div class="section-title">NOS MENUS</div>
+  <div class="section-sub">Choisis ta taille, compose ta box</div>
+  <div class="menus-grid">
+
+    <div class="menu-card" onclick="openComposer('mini')">
+      <div class="menu-card-img">🥡<span class="menu-card-badge">3 slots</span></div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">MINI TCHOP</div>
+        <div class="menu-card-desc">Petit mais costaud. Parfait pour une pause rapide sans se ruiner le ventre.</div>
+        <div class="menu-card-slots"><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div></div>
+        <div class="menu-card-price"><span class="price">2 500 XAF</span><button class="btn-choose">Composer →</button></div>
+      </div>
+    </div>
+
+    <div class="menu-card" onclick="openComposer('big')">
+      <div class="menu-card-img">📦<span class="menu-card-badge" style="background:var(--accent2)">5 slots</span></div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">BIG TCHOP</div>
+        <div class="menu-card-desc">Le classique. Le vrai. Pour ceux qui savent ce qu'ils veulent et combien ils ont faim.</div>
+        <div class="menu-card-slots"><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div></div>
+        <div class="menu-card-price"><span class="price">4 000 XAF</span><button class="btn-choose">Composer →</button></div>
+      </div>
+    </div>
+
+    <div class="menu-card" onclick="openComposer('maxi')">
+      <div class="menu-card-img">🗃️<span class="menu-card-badge" style="background:linear-gradient(135deg,#f4a024,#e85d2f)">7 slots</span></div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">MAXI TCHOP</div>
+        <div class="menu-card-desc">Pour les affamés, les partageux et ceux qui ne font pas les choses à moitié.</div>
+        <div class="menu-card-slots"><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div><div class="slot-dot"></div></div>
+        <div class="menu-card-price"><span class="price">6 500 XAF</span><button class="btn-choose">Composer →</button></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMPOSER -->
+<div class="composer-overlay" id="composerOverlay">
+  <div class="composer-modal">
+    <div class="composer-left">
+      <div class="composer-header">
+        <div>
+          <div class="composer-title">COMPOSE TA BOX</div>
+          <div class="composer-subtitle" id="composerSub">Big Tchop – 5 emplacements</div>
+        </div>
+        <button class="close-btn" onclick="closeComposer()">✕</button>
+      </div>
+      <div class="food-categories">
+        <button class="cat-btn active" onclick="filterCat(this,'all')">Tout</button>
+        <button class="cat-btn" onclick="filterCat(this,'plat')">🍽️ Plats</button>
+        <button class="cat-btn" onclick="filterCat(this,'accomp')">🍟 Accompagnements</button>
+        <button class="cat-btn" onclick="filterCat(this,'sauce')">🫙 Sauces</button>
+        <button class="cat-btn" onclick="filterCat(this,'boisson')">🧃 Boissons</button>
+        <button class="cat-btn" onclick="filterCat(this,'dessert')">🍮 Desserts</button>
+      </div>
+      <div class="food-grid" id="foodGrid"></div>
+    </div>
+
+    <div class="composer-right">
+      <div class="box-header">
+        <div class="box-title">TON TCHOP BOX</div>
+        <div class="box-size-label" id="boxSizeLabel">BIG TCHOP – 5 slots</div>
+      </div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="boxCanvas"></canvas>
+        <div class="drag-hint" id="dragHint">↺ Fais pivoter le carton</div>
+      </div>
+      <div class="fill-gauge-wrap">
+        <div class="fill-label">
+          <span>Remplissage du carton</span>
+          <span class="fill-count" id="fillCount">0 / 5</span>
+        </div>
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
+      </div>
+      <div class="box-items-list" id="boxItemsList"></div>
+      <div class="full-msg" id="fullMsg">🔥 Ton Tchop Box est plein !</div>
+      <button class="btn-order" id="btnOrder">Commander mon Tchop Box 🚀</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── DATA ──────────────────────────────────────────────
+const FOODS = [
+  { id:1,  emoji:'🌮', name:'Tacos Bœuf',         cat:'plat',    stock:5, cal:'480 kcal' },
+  { id:2,  emoji:'🍗', name:'Poulet Yassa',        cat:'plat',    stock:4, cal:'380 kcal' },
+  { id:3,  emoji:'🥩', name:'Brochette',           cat:'plat',    stock:3, cal:'320 kcal' },
+  { id:4,  emoji:'🍔', name:'Burger Maison',       cat:'plat',    stock:6, cal:'520 kcal' },
+  { id:5,  emoji:'🥗', name:'Salade Fraîche',      cat:'plat',    stock:8, cal:'180 kcal' },
+  { id:6,  emoji:'🍟', name:'Frites Croustillantes',cat:'accomp', stock:7, cal:'290 kcal' },
+  { id:7,  emoji:'🌽', name:'Maïs Grillé',         cat:'accomp',  stock:5, cal:'150 kcal' },
+  { id:8,  emoji:'🧅', name:'Oignons Frits',       cat:'accomp',  stock:4, cal:'200 kcal' },
+  { id:9,  emoji:'🥞', name:'Plantain Frit',       cat:'accomp',  stock:6, cal:'240 kcal' },
+  { id:10, emoji:'🫙', name:'Sauce Piment',        cat:'sauce',   stock:1, cal:'30 kcal'  },
+  { id:11, emoji:'🧄', name:'Sauce Ail',           cat:'sauce',   stock:9, cal:'25 kcal'  },
+  { id:12, emoji:'🍅', name:'Sauce Tomate',        cat:'sauce',   stock:2, cal:'35 kcal'  },
+  { id:13, emoji:'🧃', name:'Jus Gingembre',       cat:'boisson', stock:5, cal:'90 kcal'  },
+  { id:14, emoji:'🥤', name:'Bissap Glacé',        cat:'boisson', stock:3, cal:'80 kcal'  },
+  { id:15, emoji:'💧', name:'Eau Fraîche',         cat:'boisson', stock:10,cal:'0 kcal'   },
+  { id:16, emoji:'🍮', name:'Crème Caramel',       cat:'dessert', stock:4, cal:'280 kcal' },
+  { id:17, emoji:'🍌', name:'Banane Flambée',      cat:'dessert', stock:2, cal:'210 kcal' },
+];
+
+const MENUS = {
+  mini: { label:'MINI TCHOP', slots:3 },
+  big:  { label:'BIG TCHOP',  slots:5 },
+  maxi: { label:'MAXI TCHOP', slots:7 },
+};
+
+const FOOD_COLORS = {
+  plat: 0xe85d2f, accomp: 0xf4a024, sauce: 0xcc2222,
+  boisson: 0x3dba6a, dessert: 0xd966cc,
+};
+
+let currentMenu = 'big';
+let boxItems = [];
+let stockState = {};
+let currentCat = 'all';
+FOODS.forEach(f => { stockState[f.id] = f.stock; });
+
+// ── THREE.JS ───────────────────────────────────────────
+let scene, camera, renderer, boxGroup, lidGroup;
+let isDragging = false, prevMouseX = 0, prevMouseY = 0;
+let rotY = -0.5, rotX = 0.3;
+let autoRotate = true;
+let foodMeshes = [];
+let lidAngle = 0, targetLidAngle = 0;
+let threeInited = false;
+
+function initThree() {
+  const wrap = document.getElementById('canvasWrap');
+  const canvas = document.getElementById('boxCanvas');
+  const W = wrap.clientWidth || 380;
+  const H = wrap.clientHeight || 260;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1a1612);
+  scene.fog = new THREE.Fog(0x1a1612, 14, 22);
+
+  camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+  camera.position.set(0, 3.0, 7.2);
+  camera.lookAt(0, 0.6, 0);
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffd8a0, 0.55));
+  const sun = new THREE.DirectionalLight(0xffc060, 1.5);
+  sun.position.set(5, 9, 6);
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 1024;
+  sun.shadow.mapSize.height = 1024;
+  scene.add(sun);
+  const fill = new THREE.DirectionalLight(0x6040ff, 0.28);
+  fill.position.set(-5, 2, -4);
+  scene.add(fill);
+  const rim = new THREE.PointLight(0xff5010, 0.9, 18);
+  rim.position.set(3, 5, -3);
+  scene.add(rim);
+
+  // Ground shadow plane
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    new THREE.ShadowMaterial({ opacity: 0.22 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.05;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  buildBox();
+  animate();
+
+  // Mouse events
+  canvas.addEventListener('mousedown', e => { isDragging = true; autoRotate = false; prevMouseX = e.clientX; prevMouseY = e.clientY; hideDragHint(); });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    rotY += (e.clientX - prevMouseX) * 0.013;
+    rotX += (e.clientY - prevMouseY) * 0.009;
+    rotX = Math.max(-0.75, Math.min(0.75, rotX));
+    prevMouseX = e.clientX; prevMouseY = e.clientY;
+  });
+
+  // Touch events
+  canvas.addEventListener('touchstart', e => { isDragging = true; autoRotate = false; prevMouseX = e.touches[0].clientX; prevMouseY = e.touches[0].clientY; hideDragHint(); e.preventDefault(); }, { passive: false });
+  window.addEventListener('touchend', () => { isDragging = false; });
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    rotY += (e.touches[0].clientX - prevMouseX) * 0.013;
+    rotX += (e.touches[0].clientY - prevMouseY) * 0.009;
+    rotX = Math.max(-0.75, Math.min(0.75, rotX));
+    prevMouseX = e.touches[0].clientX; prevMouseY = e.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('resize', resizeRenderer);
+  threeInited = true;
+}
+
+function resizeRenderer() {
+  const wrap = document.getElementById('canvasWrap');
+  if (!wrap || !renderer) return;
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  if (W === 0 || H === 0) return;
+  camera.aspect = W / H;
+  camera.updateProjectionMatrix();
+  renderer.setSize(W, H);
+}
+
+function mat(color, roughness = 0.65, metalness = 0) {
+  return new THREE.MeshStandardMaterial({ color, roughness, metalness });
+}
+
+function buildBox() {
+  if (boxGroup) scene.remove(boxGroup);
+  boxGroup = new THREE.Group();
+  lidGroup = null;
+  foodMeshes = [];
+
+  const kraft = 0xc47e36, inner = 0xd4935a, dark = 0x7a4a1a;
+  const BW = 2.5, BH = 1.9, BD = 1.7, T = 0.065;
+
+  // Bottom plate
+  const bottom = new THREE.Mesh(new THREE.BoxGeometry(BW, T, BD), mat(kraft));
+  bottom.position.y = 0;
+  bottom.receiveShadow = true;
+  boxGroup.add(bottom);
+
+  // Inner floor
+  const iFloor = new THREE.Mesh(new THREE.BoxGeometry(BW - T * 2, T * 0.6, BD - T * 2), mat(inner));
+  iFloor.position.y = T * 1.6;
+  boxGroup.add(iFloor);
+
+  // Walls
+  const walls = [
+    { size: [BW, BH, T], pos: [0, BH/2, BD/2] },         // front
+    { size: [BW, BH, T], pos: [0, BH/2, -BD/2] },        // back
+    { size: [T, BH, BD], pos: [-BW/2, BH/2, 0] },        // left
+    { size: [T, BH, BD], pos: [BW/2, BH/2, 0] },         // right
+  ];
+  walls.forEach(({ size, pos }) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(...size), mat(kraft));
+    m.position.set(...pos);
+    m.castShadow = true;
+    m.receiveShadow = true;
+    boxGroup.add(m);
+  });
+
+  // Corner edges
+  const edgeMat = mat(dark, 0.8);
+  [[-BW/2, BD/2], [BW/2, BD/2], [-BW/2, -BD/2], [BW/2, -BD/2]].forEach(([x, z]) => {
+    const e = new THREE.Mesh(new THREE.BoxGeometry(0.055, BH + 0.06, 0.055), edgeMat);
+    e.position.set(x, BH/2, z);
+    e.castShadow = true;
+    boxGroup.add(e);
+  });
+
+  // Brand stripe (front face)
+  const stripeRed = mat(0xe85d2f, 0.8);
+  for (let i = 0; i < 3; i++) {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(BW * 0.85, 0.055, 0.01), stripeRed);
+    s.position.set(0, BH * 0.18 + i * 0.16, BD/2 + 0.008);
+    boxGroup.add(s);
+  }
+  // Logo rect
+  const logo = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.32, 0.01), mat(0xe85d2f, 0.7));
+  logo.position.set(0, BH * 0.62, BD/2 + 0.008);
+  boxGroup.add(logo);
+
+  // Lid group (pivots around back top edge)
+  lidGroup = new THREE.Group();
+  lidGroup.position.set(0, BH + T / 2, -BD/2);
+
+  const lid = new THREE.Mesh(new THREE.BoxGeometry(BW, T, BD), mat(kraft, 0.5));
+  lid.position.set(0, 0, BD/2);
+  lid.castShadow = true;
+
+  // Lid flap detail
+  const flap = new THREE.Mesh(new THREE.BoxGeometry(BW * 0.28, T * 1.3, 0.045), mat(dark, 0.7));
+  flap.position.set(0, 0, BD - 0.04);
+  lidGroup.add(lid);
+  lidGroup.add(flap);
+  boxGroup.add(lidGroup);
+
+  // Lid corner edges
+  [[-BW/2, BD-0.01], [BW/2, BD-0.01]].forEach(([x, z]) => {
+    const e = new THREE.Mesh(new THREE.BoxGeometry(0.055, T * 1.4, 0.055), mat(dark, 0.8));
+    e.position.set(x, 0, z);
+    lidGroup.add(e);
+  });
+
+  scene.add(boxGroup);
+}
+
+function addFoodMesh(food) {
+  const idx = foodMeshes.length;
+  const cols = 3;
+  const col = idx % cols;
+  const row = Math.floor(idx / cols);
+
+  const color = FOOD_COLORS[food.cat] || 0xffffff;
+  let mesh;
+
+  if (food.cat === 'boisson') {
+    mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.5, 16), mat(color, 0.3, 0.4));
+  } else if (food.cat === 'sauce') {
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 14), mat(color, 0.4));
+  } else {
+    mesh = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.24, 0.34), mat(color, 0.7));
+  }
+
+  mesh.castShadow = true;
+
+  const BW = 2.5, BD = 1.7;
+  const startX = -(BW / 2 - 0.28);
+  const spX = cols > 1 ? (BW - 0.56) / (cols - 1) : 0;
+  const x = startX + col * spX;
+  const z = (Math.random() - 0.5) * (BD - 0.55) * 0.4;
+  const targetY = 0.2 + row * 0.32;
+
+  mesh.position.set(x, 2.8, z);
+  mesh.rotation.y = (Math.random() - 0.5) * 0.7;
+
+  let vy = 0;
+  const drop = () => {
+    vy -= 0.018;
+    mesh.position.y += vy;
+    if (mesh.position.y > targetY) requestAnimationFrame(drop);
+    else { mesh.position.y = targetY; vy = 0; }
+  };
+  drop();
+
+  boxGroup.add(mesh);
+  foodMeshes.push({ mesh, foodId: food.id });
+}
+
+function removeFoodMesh(food) {
+  const idx = foodMeshes.findIndex(f => f.foodId === food.id);
+  if (idx === -1) return;
+  boxGroup.remove(foodMeshes[idx].mesh);
+  foodMeshes.splice(idx, 1);
+  // Reposition remaining
+  foodMeshes.forEach(({ mesh }, i) => {
+    const cols = 3, BW = 2.5, BD = 1.7;
+    const col = i % cols, row = Math.floor(i / cols);
+    const startX = -(BW / 2 - 0.28);
+    const spX = cols > 1 ? (BW - 0.56) / (cols - 1) : 0;
+    mesh.position.x = startX + col * spX;
+    mesh.position.y = 0.2 + row * 0.32;
+    mesh.position.z = (Math.random() - 0.5) * (BD - 0.55) * 0.4;
+  });
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (autoRotate) rotY += 0.004;
+
+  const slots = MENUS[currentMenu].slots;
+  const ratio = boxItems.length / slots;
+  targetLidAngle = ratio >= 1 ? -Math.PI * 0.88 : -ratio * Math.PI * 0.5;
+  lidAngle += (targetLidAngle - lidAngle) * 0.07;
+  if (lidGroup) lidGroup.rotation.x = lidAngle;
+
+  if (boxGroup) {
+    boxGroup.rotation.y = rotY;
+    boxGroup.rotation.x = rotX;
+    boxGroup.position.y = Math.sin(Date.now() * 0.0009) * 0.05;
+  }
+  renderer.render(scene, camera);
+}
+
+function hideDragHint() {
+  const el = document.getElementById('dragHint');
+  if (el) el.style.opacity = '0';
+}
+
+// ── UI LOGIC ───────────────────────────────────────────
+function openComposer(type) {
+  currentMenu = type;
+  boxItems = [];
+  FOODS.forEach(f => { stockState[f.id] = f.stock; });
+
+  const menu = MENUS[type];
+  document.getElementById('composerSub').textContent = `${menu.label} – ${menu.slots} emplacements`;
+  document.getElementById('boxSizeLabel').textContent = `${menu.label} – ${menu.slots} slots`;
+
+  currentCat = 'all';
+  document.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+
+  document.getElementById('composerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  updateUI();
+  renderFoodGrid();
+
+  setTimeout(() => {
+    if (!threeInited) initThree();
+    else { foodMeshes = []; buildBox(); autoRotate = true; lidAngle = 0; targetLidAngle = 0; document.getElementById('dragHint').style.opacity = '1'; }
+    resizeRenderer();
+  }, 80);
+}
+
+function closeComposer() {
+  document.getElementById('composerOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function filterCat(btn, cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFoodGrid();
+}
+
+function renderFoodGrid() {
+  const grid = document.getElementById('foodGrid');
+  const slots = MENUS[currentMenu].slots;
+  const isFull = boxItems.length >= slots;
+  const list = currentCat === 'all' ? FOODS : FOODS.filter(f => f.cat === currentCat);
+
+  grid.innerHTML = list.map(food => {
+    const stock = stockState[food.id];
+    const oos = stock === 0;
+    const cls = oos ? 'out-of-stock' : isFull ? 'box-full' : '';
+    const bCls = stock === 1 ? 'warn' : '';
+    return `<div class="food-item ${cls}" onclick="addFood(${food.id})" id="fi-${food.id}">
+      <span class="food-emoji">${food.emoji}</span>
+      <div class="food-name">${food.name}</div>
+      <div class="food-cal">${food.cal}</div>
+      <div class="stock-bubble ${bCls}" id="sb-${food.id}">${stock}</div>
+    </div>`;
+  }).join('');
+}
+
+function addFood(id) {
+  const slots = MENUS[currentMenu].slots;
+  if (boxItems.length >= slots) { showToast('🚫 Ton carton est plein !'); return; }
+  const food = FOODS.find(f => f.id === id);
+  if (!food || stockState[id] <= 0) return;
+  stockState[id]--;
+  boxItems.push({ ...food });
+  addFoodMesh(food);
+  updateUI();
+  renderFoodGrid();
+  showToast(`${food.emoji} ${food.name} ajouté !`);
+  // Animate bubble
+  const sb = document.getElementById(`sb-${id}`);
+  if (sb) { sb.classList.add('pulse'); setTimeout(() => sb.classList.remove('pulse'), 350); }
+}
+
+function removeFood(idx) {
+  const food = boxItems[idx];
+  if (!food) return;
+  stockState[food.id]++;
+  boxItems.splice(idx, 1);
+  removeFoodMesh(food);
+  updateUI();
+  renderFoodGrid();
+  showToast(`${food.emoji} Retiré du carton`);
+}
+
+function updateUI() {
+  const slots = MENUS[currentMenu].slots;
+  const count = boxItems.length;
+  const isFull = count >= slots;
+  document.getElementById('fillCount').textContent = `${count} / ${slots}`;
+  const gauge = document.getElementById('gaugeFill');
+  gauge.style.width = (count / slots * 100) + '%';
+  gauge.classList.toggle('full', isFull);
+  document.getElementById('fullMsg').classList.toggle('show', isFull);
+  document.getElementById('btnOrder').classList.toggle('active', count > 0);
+  document.getElementById('boxItemsList').innerHTML = boxItems.map((food, i) =>
+    `<div class="box-item-row">
+      <div class="box-item-left"><span class="box-item-emoji">${food.emoji}</span><span class="box-item-name">${food.name}</span></div>
+      <button class="remove-item" onclick="removeFood(${i})">✕</button>
+    </div>`
+  ).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+document.getElementById('composerOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeComposer();
+});
+
+if (!Array.prototype.findIndex) {
+  Array.prototype.findIndex = function(fn) {
+    for (let i = 0; i < this.length; i++) if (fn(this[i], i)) return i;
+    return -1;
+  };
+}
+</script>
+</body>
+</html>
