@@ -870,7 +870,7 @@ function tick() {
   const dist = EVENT - Date.now();
   if (dist <= 0) {
     document.querySelector('.countdown-section').innerHTML =
-      '<div class="cd-label" style="font-size:1.8rem;color:var(--white)">🎉 L\'événement est en cours !</div>';
+      '<div class="cd-label" style="font-size:1.8rem;color:var(--white)">🎉 L\'événement est terminé !</div>';
     return;
   }
   cdD.textContent = pad(Math.floor(dist / 86400000));
